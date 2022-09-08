@@ -7,7 +7,9 @@
 
 #include "matrixes.h"
 
-void * insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset) {
+using namespace MyMatrixes;
+
+void * MyMatrixes::insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset) {
     char * tmp = new char[len+sub_len];
     std::memcpy(tmp, array, offset);
     std::memcpy(tmp + offset + sub_len, tmp + offset, len-offset);
@@ -15,7 +17,7 @@ void * insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t
     return (void *) tmp;
 }
 
-CSR_matrix * init_CSR_matrix() {
+CSR_matrix * MyMatrixes::init_CSR_matrix() {
     CSR_matrix * M = new CSR_matrix;
 
     M->height = 0;
@@ -29,7 +31,7 @@ CSR_matrix * init_CSR_matrix() {
     return M;
 }
 
-void insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t index) {
+void MyMatrixes::insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t index) {
     if (row == nullptr || M == nullptr) return;
 
     int * items = new int[M->width];
@@ -89,7 +91,7 @@ void insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t index) {
     delete[] items;
 }
 
-ListMatrix * cut_CSR_matrix(CSR_matrix * &M) {
+ListMatrix * MyMatrixes::cut_CSR_matrix(CSR_matrix * &M) {
     auto * max_col = new size_t[M->height];
     for (size_t i = 0; i < M->height; ++i) {
         max_col[i] = M->cols_indexes[M->rows_indexes[i]];
@@ -128,7 +130,7 @@ ListMatrix * cut_CSR_matrix(CSR_matrix * &M) {
     return LM;
 }
 
-void print_CSR_matrix(const CSR_matrix * M) {
+void MyMatrixes::print_CSR_matrix(const CSR_matrix * M) {
     size_t count = 0;
     for (size_t i = 1; i < M->height+1; ++i) {
         size_t ind = 0;
@@ -147,7 +149,7 @@ void print_CSR_matrix(const CSR_matrix * M) {
     }
 }
 
-void destruct_CSR_matrix(CSR_matrix * &M) {
+void MyMatrixes::destruct_CSR_matrix(CSR_matrix * &M) {
     delete[] M->items;
     delete[] M->cols_indexes;
     delete[] M->rows_indexes;

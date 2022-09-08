@@ -6,6 +6,8 @@
 #define LAB1_SEM3_INPUT_H
 #include "matrixes.h"
 
-int * read_matrix_line(size_t n);
-CSR_matrix * read_matrix();
+namespace MyMatrixes {
+    int * read_matrix_line(size_t n);
+    CSR_matrix * read_matrix();
+}
 #endif //LAB1_SEM3_INPUT_H

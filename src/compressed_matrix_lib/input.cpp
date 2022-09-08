@@ -6,7 +6,10 @@
 #include <string>
 
 #include "matrixes.h"
+#include "input.h"
 
+
+using namespace MyMatrixes;
 
 int * read_int_array(size_t n) {
     int * array = new int[n];
@@ -31,7 +34,7 @@ int * read_int_array(size_t n) {
     return array;
 }
 
-CSR_matrix * read_matrix() {
+CSR_matrix * MyMatrixes::read_matrix() {
     size_t height{}, width{};
     std::cout << "введите высоту и ширину вашей матрицы: " << std::endl;
     std::string height_s;

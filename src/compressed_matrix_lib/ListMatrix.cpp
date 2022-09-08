@@ -7,8 +7,9 @@
 
 #include "matrixes.h"
 
+using namespace MyMatrixes;
 
-ListEl * init_el(int data) {
+ListEl * MyMatrixes::init_el(int data) {
     auto * el = new ListEl;
     el->next = nullptr;
     el->pr = nullptr;
@@ -21,7 +22,7 @@ void destruct_el(ListEl * el) {
     delete el;
 }
 
-MatrixList * init_list() {
+MatrixList * MyMatrixes::init_list() {
     auto * list = new MatrixList;
     list->n = 0;
     list->size = 0;
@@ -43,7 +44,7 @@ void clear_list(MatrixList * list) {
     list->n = 0;
 }
 
-void destruct_list(MatrixList * list) {
+void MyMatrixes::destruct_list(MatrixList * list) {
     ListEl * el = list->head;
     while (el != nullptr) {
         ListEl * tmp = el;
@@ -53,7 +54,7 @@ void destruct_list(MatrixList * list) {
     delete list;
 }
 
-void push_back(MatrixList * list, int data) {
+void MyMatrixes::push_back(MatrixList * list, int data) {
     if (list == nullptr)
         throw "pushing to nullptr array";
 
@@ -61,13 +62,13 @@ void push_back(MatrixList * list, int data) {
         if (list->tail->data == data) {
             list->tail->n++;
         } else {
-            list->tail->next = init_el(data);
+            list->tail->next = MyMatrixes::init_el(data);
             list->tail->next->pr = list->tail;
             list->tail = list->tail->next;
             list->size++;
         }
     } else {
-        list->head = init_el(data);
+        list->head = MyMatrixes::init_el(data);
         list->tail = list->head;
         list->size++;
     }
@@ -89,7 +90,7 @@ void print_list(const MatrixList * list) {
     std::cout << std::endl;
 }
 
-ListMatrix * init_list_matrix() {
+ListMatrix * MyMatrixes::init_list_matrix() {
     auto * M = new ListMatrix;
     M->array = nullptr;
     M->n = 0;
@@ -97,7 +98,7 @@ ListMatrix * init_list_matrix() {
     return M;
 }
 
-void push_line_list_matrix(ListMatrix * M, MatrixList * list) {
+void MyMatrixes::push_line_list_matrix(ListMatrix * M, MatrixList * list) {
     if (M->array == nullptr) {
         M->array = new MatrixList[1];
         M->array[0] = *list;
@@ -110,7 +111,7 @@ void push_line_list_matrix(ListMatrix * M, MatrixList * list) {
 }
 
 ListMatrix * init_list_matrix(CSR_matrix * M) {
-    ListMatrix * LM = init_list_matrix();
+    ListMatrix * LM = MyMatrixes::init_list_matrix();
 
     MatrixList * list = nullptr;
     for (size_t i = 1; i < M->height+1; ++i) {
@@ -118,28 +119,28 @@ ListMatrix * init_list_matrix(CSR_matrix * M) {
         list = init_list();
         for (size_t j = 0; j <= M->width; ++j) {
             if (ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
-                push_back(list, M->items[M->rows_indexes[i-1]+ind]);
+                MyMatrixes::push_back(list, M->items[M->rows_indexes[i-1]+ind]);
                 ++ind;
             }
             else {
-                push_back(list, 0);
+                MyMatrixes::push_back(list, 0);
             }
         }
-        push_line_list_matrix(LM, list);
+        MyMatrixes::push_line_list_matrix(LM, list);
         delete list;
     }
 
     return LM;
 }
 
-void print_list_matrix(const ListMatrix * LM) {
+void MyMatrixes::print_list_matrix(const ListMatrix * LM) {
     for (size_t i = 0; i < LM->n; ++i) {
         // печатаем листик
         print_list(LM->array+i);
     }
 }
 
-void destruct_list_matrix(ListMatrix * M) {
+void MyMatrixes::destruct_list_matrix(ListMatrix * M) {
     for (size_t i = 0; i < M->n; ++i)
         clear_list(M->array + i);
     delete[] M->array;

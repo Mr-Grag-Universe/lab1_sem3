@@ -16,22 +16,20 @@ int main() {
 
     std::cout << "Введите вашу матрицу" << std::endl;
 
-    CSR_matrix * M = read_matrix();
+    MyMatrixes::CSR_matrix * M = MyMatrixes::read_matrix();
     if (M == nullptr) {
         std::cout << "you failed input. try again next time" << std::endl;
         return 1;
     }
     print_CSR_matrix(M);
 
-    ListMatrix * LM = cut_CSR_matrix(M);
+    MyMatrixes::ListMatrix * LM = cut_CSR_matrix(M);
 
     std::cout << "Ваша обрезанная матрица:\n" << std::endl;
     print_list_matrix(LM);
 
     destruct_list_matrix(LM);
     destruct_CSR_matrix(M);
-
-    // std::cin >> row1[0];
 
     return 0;
 }
