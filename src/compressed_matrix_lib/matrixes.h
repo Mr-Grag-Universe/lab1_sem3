@@ -47,8 +47,7 @@ struct ListMatrix {
     MatrixList * array;
 };
 
-ListEl * init_el();
-ListEl * init_el(int data);
+ListEl * init_el(int data = 0);
 
 MatrixList * init_list();
 void push_back(MatrixList * list, int data);

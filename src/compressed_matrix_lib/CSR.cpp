@@ -33,7 +33,7 @@ void insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t index) {
     if (row == nullptr || M == nullptr) return;
 
     int * items = new int[M->width];
-    size_t * cols = new size_t[M->width];
+    auto * cols = new size_t[M->width];
     size_t n = 0;
     for (size_t i = 0; i < M->width; ++i) items[i] = 0;
 
@@ -63,7 +63,8 @@ void insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t index) {
         M->rows_indexes = new size_t[2];
         M->rows_indexes[0] = 0;
         M->rows_indexes[1] = n;
-    } else {
+    }
+    else {
         void * tmp = insert((void*) M->items, (M->n_items)*sizeof(int), (void*) items, sizeof(int)*n, M->rows_indexes[index]*sizeof(int));
         delete[] M->items;
         M->items = (int*) tmp;
@@ -100,10 +101,10 @@ ListMatrix * cut_CSR_matrix(CSR_matrix * &M) {
             }
         }
     }
-    std::cout << "max_col: ";
-    for (size_t i = 0; i < M->height; ++i)
-        std::cout << max_col[i] << " ";
-    std::cout << std::endl;
+//    std::cout << "max_col: ";
+//    for (size_t i = 0; i < M->height; ++i)
+//        std::cout << max_col[i] << " ";
+//    std::cout << std::endl;
 
     ListMatrix * LM = init_list_matrix();
     for (size_t i = 1; i < M->height+1; ++i) {
@@ -128,12 +129,15 @@ ListMatrix * cut_CSR_matrix(CSR_matrix * &M) {
 }
 
 void print_CSR_matrix(const CSR_matrix * M) {
+    size_t count = 0;
     for (size_t i = 1; i < M->height+1; ++i) {
         size_t ind = 0;
         for (size_t j = 0; j < M->width; ++j) {
-            if (ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
+            // getchar();
+            if (count < M->n_items && ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
                 std::cout << M->items[M->rows_indexes[i-1]+ind] << " ";
                 ++ind;
+                ++count;
             }
             else {
                 std::cout << 0 << " ";

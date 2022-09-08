@@ -4,21 +4,12 @@
 
 #include <iostream>
 #include <string>
-#include <list>
 
 #include "matrixes.h"
 
 
-ListEl * init_el() {
-    ListEl * el = new ListEl;
-    el->next = nullptr;
-    el->pr = nullptr;
-    el->n = 0;
-    el->data = 0;
-    return el;
-}
 ListEl * init_el(int data) {
-    ListEl * el = new ListEl;
+    auto * el = new ListEl;
     el->next = nullptr;
     el->pr = nullptr;
     el->n = 1;
@@ -120,6 +111,23 @@ void push_line_list_matrix(ListMatrix * M, MatrixList * list) {
 
 ListMatrix * init_list_matrix(CSR_matrix * M) {
     ListMatrix * LM = init_list_matrix();
+
+    MatrixList * list = nullptr;
+    for (size_t i = 1; i < M->height+1; ++i) {
+        size_t ind = 0;
+        list = init_list();
+        for (size_t j = 0; j <= M->width; ++j) {
+            if (ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
+                push_back(list, M->items[M->rows_indexes[i-1]+ind]);
+                ++ind;
+            }
+            else {
+                push_back(list, 0);
+            }
+        }
+        push_line_list_matrix(LM, list);
+        delete list;
+    }
 
     return LM;
 }
