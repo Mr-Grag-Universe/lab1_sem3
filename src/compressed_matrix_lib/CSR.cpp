@@ -40,15 +40,19 @@ CSR_matrix * MyMatrixes::init_CSR_matrix() {
 }
 
 CSR_matrix * MyMatrixes::init_CSR_matrix(Item * &items, size_t n, size_t width, size_t height) {
-    CSR_matrix * M = init_CSR_matrix();
+    CSR_matrix * M = new CSR_matrix;// init_CSR_matrix();
     M->width = width;
     M->height = height;
+    M->n_items = 0;
+    M->rows_indexes = nullptr;
+    M->cols_indexes = nullptr;
+    M->items = nullptr;
     // исправление если мало элементов (добавляем нули - как элементы нулевых строк)
     size_t new_n = n;
     if (n < height) {
         for (size_t i = 0; i < height; ++i) {
             bool found = false;
-            for (size_t j = 0; j < n; ++j) {
+            for (size_t j = 0; j < new_n; ++j) {
                 if (items[j].i == i) {
                     found = true;
                     break;
@@ -70,8 +74,8 @@ CSR_matrix * MyMatrixes::init_CSR_matrix(Item * &items, size_t n, size_t width, 
 
     std::qsort(items, new_n, sizeof(Item), item_comp);
     int * item = new int[new_n];
-    size_t * cols = new size_t[new_n];
-    size_t * rows = new size_t[height+1];
+    auto * cols = new size_t[new_n];
+    auto * rows = new size_t[height+1];
     rows[0] = 0;
 
     size_t ind = 0;
@@ -84,6 +88,20 @@ CSR_matrix * MyMatrixes::init_CSR_matrix(Item * &items, size_t n, size_t width, 
         }
     }
     rows[height] = new_n;
+
+    std::cout << "items: ";
+    for (size_t i = 0; i < new_n; ++i)
+        std::cout << item[i];
+    std::cout << "\n";
+    std::cout << "cols: ";
+    for (size_t i = 0; i < new_n; ++i)
+        std::cout << cols[i];
+    std::cout << "\n";
+    std::cout << "rows: ";
+    for (size_t i = 0; i < height+1; ++i)
+        std::cout << rows[i];
+    std::cout << "\n";
+
 
     M->items = item;
     M->cols_indexes = cols;
@@ -200,7 +218,7 @@ void MyMatrixes::print_CSR_matrix(const CSR_matrix * M) {
         size_t ind = 0;
         for (size_t j = 0; j < M->width; ++j) {
             // getchar();
-            if (count < M->n_items && ind < M->n_items && count < M->rows_indexes[i] && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
+            if (ind < M->n_items && count < M->rows_indexes[i] && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
                 std::cout << M->items[M->rows_indexes[i-1]+ind] << " ";
                 ++ind;
                 ++count;

@@ -30,6 +30,24 @@ int read_int() {
     }
     return n;
 }
+size_t read_size_t() {
+    std::string s;
+    if (!(std::cin >> s)) {
+        std::cout << "end of this stream" << std::endl;
+        throw std::runtime_error("");
+    }
+    size_t n;
+    try {
+        n = std::stoll(s);
+    } catch (const std::invalid_argument & e) {
+        std::cout << e.what() << std::endl;
+        throw std::runtime_error("wrong input");
+    } catch (const std::out_of_range & e) {
+        std::cout << e.what() << std::endl;
+        throw std::invalid_argument("wrong input");
+    }
+    return n;
+}
 
 int * read_int_array(size_t n) {
     int * array = new int[n];
@@ -103,11 +121,21 @@ CSR_matrix * MyMatrixes::read_compressed_matrix() {
     size_t size = 1;
     Item * items = new Item[1];
     std::cout << "enter not zero elements in your matrix in format:\n<i-index> <j-index> <int-data>" << std::endl;
-    while (counter <= height * width) {
+    while (counter < height * width) {
         try {
-            items[counter].i = read_int();
-            items[counter].j = read_int();
-            items[counter].data = read_int();
+            size_t i = read_size_t();
+            size_t j = read_size_t();
+            int data = read_int();
+
+            while (i >= height || j >= width || i < 0 || j < 0) {
+                std::cout << "wrong input. try again.";
+                i = read_size_t();
+                j = read_size_t();
+                data = read_int();
+            }
+            items[counter].i = i;
+            items[counter].j = j;
+            items[counter].data = data;
         } catch (std::runtime_error & e) {
             // конец ввода
             Item * tmp = new Item[counter];

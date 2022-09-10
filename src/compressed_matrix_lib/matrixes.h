@@ -5,6 +5,7 @@
 #ifndef LAB1_SEM3_MATRIXES_H
 #define LAB1_SEM3_MATRIXES_H
 #include <iostream>
+#include <cstring>
 
 namespace MyMatrixes {
     typedef struct ListMatrix ListMatrix;
@@ -67,6 +68,15 @@ namespace MyMatrixes {
         size_t j;
         int data;
     };
+
+    template <typename T>
+    T insert_t(T * array, size_t n, T * sub_array, size_t sub_n, size_t ind) {
+        T * tmp = new T[n+sub_n];
+        std::memmove(tmp, array, ind);
+        std::memmove(tmp + ind + sub_n, tmp + ind, (n-ind) * sizeof(T));
+        std::memmove(tmp + ind, sub_array, sub_n);
+        return (void *) tmp;
+    }
 }
 
 #endif //LAB1_SEM3_MATRIXES_H

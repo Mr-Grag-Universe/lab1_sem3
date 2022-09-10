@@ -5,7 +5,7 @@
 
 
 int main() {
-    std::string input;
+    //std::string input;
 
     std::cout << "Введите вашу матрицу" << std::endl;
 
@@ -16,16 +16,15 @@ int main() {
     }
     print_CSR_matrix(M);
 
-    // destruct_list_matrix(LM);
-    destruct_CSR_matrix(M);
-    return 0;
     MyMatrixes::ListMatrix * LM = cut_CSR_matrix(M);
 
     std::cout << "Ваша обрезанная матрица:\n" << std::endl;
     print_list_matrix(LM);
 
     std::cout << "Введите любую строку, чтобы завершить работу программы";
-    // getchar();
 
 
+    destruct_list_matrix(LM);
+    destruct_CSR_matrix(M);
+    return 0;
 }
