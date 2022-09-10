@@ -9,6 +9,14 @@
 
 using namespace MyMatrixes;
 
+int item_comp(const void *a, const void *b) {
+    Item * item1 = (Item*) a;
+    Item * item2 = (Item*) b;
+    if (item1->i != item2->i)
+        return (int) ((long long) item1->i - (long long) item2->i);
+    return (int) ((long long) item1->j - (long long) item2->j);
+}
+
 void * MyMatrixes::insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset) {
     char * tmp = new char[len+sub_len];
     std::memcpy(tmp, array, offset);
@@ -18,7 +26,7 @@ void * MyMatrixes::insert(void * array, size_t len, void * sub_array, size_t sub
 }
 
 CSR_matrix * MyMatrixes::init_CSR_matrix() {
-    CSR_matrix * M = new CSR_matrix;
+    auto * M = new CSR_matrix;
 
     M->height = 0;
     M->width = 0;
@@ -27,6 +35,60 @@ CSR_matrix * MyMatrixes::init_CSR_matrix() {
     M->cols_indexes = nullptr;
     M->rows_indexes = new size_t[1];
     M->rows_indexes[0] = 0;
+
+    return M;
+}
+
+CSR_matrix * MyMatrixes::init_CSR_matrix(Item * &items, size_t n, size_t width, size_t height) {
+    CSR_matrix * M = init_CSR_matrix();
+    M->width = width;
+    M->height = height;
+    // исправление если мало элементов (добавляем нули - как элементы нулевых строк)
+    size_t new_n = n;
+    if (n < height) {
+        for (size_t i = 0; i < height; ++i) {
+            bool found = false;
+            for (size_t j = 0; j < n; ++j) {
+                if (items[j].i == i) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Item item = {i, 0, 0};
+                // void * tmp = insert(items, new_n * sizeof(Item), &item, sizeof(Item), sizeof(Item)*new_n);
+                Item * tmp = new Item[new_n+1];
+                std::memmove(tmp+1, items, sizeof(Item) * new_n);
+                tmp[0] = item;
+
+                delete[] items;
+                items = (Item*) tmp;
+                ++new_n;
+            }
+        }
+    }
+
+    std::qsort(items, new_n, sizeof(Item), item_comp);
+    int * item = new int[new_n];
+    size_t * cols = new size_t[new_n];
+    size_t * rows = new size_t[height+1];
+    rows[0] = 0;
+
+    size_t ind = 0;
+    for (size_t i = 0; i < new_n; ++i) {
+        item[i] = items[i].data;
+        cols[i] = items[i].j;
+        if (items[i].i != ind) {
+            ++ind;
+            rows[ind] = i;
+        }
+    }
+    rows[height] = new_n;
+
+    M->items = item;
+    M->cols_indexes = cols;
+    M->rows_indexes = rows;
+    M->n_items = new_n;
 
     return M;
 }
@@ -109,13 +171,15 @@ ListMatrix * MyMatrixes::cut_CSR_matrix(CSR_matrix * &M) {
 //    std::cout << std::endl;
 
     ListMatrix * LM = init_list_matrix();
+    size_t count = 0;
     for (size_t i = 1; i < M->height+1; ++i) {
         size_t ind = 0;
         MatrixList * list = init_list();
         for (size_t j = 0; j <= max_col[i-1]; ++j) {
-            if (ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
+            if (count < M->n_items && ind < M->n_items && count < M->rows_indexes[i] && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
                 push_back(list, M->items[M->rows_indexes[i-1]+ind]);
                 ++ind;
+                ++count;
             }
             else {
                 push_back(list, 0);
@@ -136,7 +200,7 @@ void MyMatrixes::print_CSR_matrix(const CSR_matrix * M) {
         size_t ind = 0;
         for (size_t j = 0; j < M->width; ++j) {
             // getchar();
-            if (count < M->n_items && ind < M->n_items && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
+            if (count < M->n_items && ind < M->n_items && count < M->rows_indexes[i] && j == M->cols_indexes[M->rows_indexes[i-1]+ind]) {
                 std::cout << M->items[M->rows_indexes[i-1]+ind] << " ";
                 ++ind;
                 ++count;

@@ -8,6 +8,7 @@
 
 namespace MyMatrixes {
     typedef struct ListMatrix ListMatrix;
+    typedef struct Item Item;
 
     typedef struct CSR_matrix {
         size_t width;
@@ -21,7 +22,8 @@ namespace MyMatrixes {
     void * insert_item(void * array, size_t n, size_t size, size_t index, void * item);
     void * insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset);
     CSR_matrix * init_CSR_matrix();
-    void insert_row_CSR_matrix(CSR_matrix * & M, const int * row, size_t index);
+    CSR_matrix * init_CSR_matrix(Item * &items, size_t n, size_t width, size_t height);
+        void insert_row_CSR_matrix(CSR_matrix * & M, const int * row, size_t index);
     ListMatrix * cut_CSR_matrix(CSR_matrix * &M);
     void print_CSR_matrix(const CSR_matrix * M);
     void destruct_CSR_matrix(CSR_matrix * &M);
@@ -58,6 +60,13 @@ namespace MyMatrixes {
     void push_line_list_matrix(ListMatrix * M, MatrixList * list);
     void print_list_matrix(const ListMatrix * LM);
     void destruct_list_matrix(ListMatrix * M);
+
+
+    struct Item {
+        size_t i;
+        size_t j;
+        int data;
+    };
 }
 
 #endif //LAB1_SEM3_MATRIXES_H

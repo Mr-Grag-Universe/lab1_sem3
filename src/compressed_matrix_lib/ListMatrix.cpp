@@ -90,6 +90,21 @@ void print_list(const MatrixList * list) {
     std::cout << std::endl;
 }
 
+void print_list_as_array(const MatrixList * list) {
+    if (list == nullptr) {
+        std::cout << "empty list" << std::endl;
+        return;
+    }
+
+    ListEl * el = list->head;
+    while (el != nullptr) {
+        for (size_t i = 0; i < el->n; ++i)
+            std::cout << el->data << " ";
+        el = el->next;
+    }
+    std::cout << std::endl;
+}
+
 ListMatrix * MyMatrixes::init_list_matrix() {
     auto * M = new ListMatrix;
     M->array = nullptr;

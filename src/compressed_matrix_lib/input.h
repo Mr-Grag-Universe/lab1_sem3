@@ -7,7 +7,13 @@
 #include "matrixes.h"
 
 namespace MyMatrixes {
+    typedef enum InputErrors {
+        END_OF_STREAM,
+        CONVERSION_FAILED,
+    } InputErrors;
+
     int * read_matrix_line(size_t n);
+    CSR_matrix * read_compressed_matrix();
     CSR_matrix * read_matrix();
 }
 #endif //LAB1_SEM3_INPUT_H
