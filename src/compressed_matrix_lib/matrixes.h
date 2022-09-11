@@ -24,10 +24,24 @@ namespace MyMatrixes {
     void * insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset);
     CSR_matrix * init_CSR_matrix();
     CSR_matrix * init_CSR_matrix(Item * &items, size_t n, size_t width, size_t height);
-        void insert_row_CSR_matrix(CSR_matrix * & M, const int * row, size_t index);
+    void insert_row_CSR_matrix(CSR_matrix * & M, const int * row, size_t index);
     ListMatrix * cut_CSR_matrix(CSR_matrix * &M);
     void print_CSR_matrix(const CSR_matrix * M);
     void destruct_CSR_matrix(CSR_matrix * &M);
+
+
+    typedef struct DOC_matrix {
+        size_t width;
+        size_t height;
+        size_t n_items;
+        Item * items;
+    } DOC_matrix;
+    DOC_matrix * init_DOC_matrix(size_t width=0, size_t height=0);
+    DOC_matrix * init_DOC_matrix(Item * &items, size_t n, size_t width, size_t height);
+    ListMatrix * cut_DOC_matrix(CSR_matrix * &M);
+    void print_DOC_matrix(const DOC_matrix * M);
+    void print_DOC_matrix(const CSR_matrix * M);
+    void destruct_DOC_matrix(DOC_matrix * &M);
 
 
     typedef struct ListEl {
@@ -68,14 +82,15 @@ namespace MyMatrixes {
         size_t j;
         int data;
     };
+    int item_comp(const void *a, const void *b);
 
     template <typename T>
-    T insert_t(T * array, size_t n, T * sub_array, size_t sub_n, size_t ind) {
+    void insert_t(T * &array, size_t n, T * sub_array, size_t sub_n, size_t ind) {
         T * tmp = new T[n+sub_n];
         std::memmove(tmp, array, ind);
         std::memmove(tmp + ind + sub_n, tmp + ind, (n-ind) * sizeof(T));
         std::memmove(tmp + ind, sub_array, sub_n);
-        return (void *) tmp;
+        array = tmp;
     }
 }
 

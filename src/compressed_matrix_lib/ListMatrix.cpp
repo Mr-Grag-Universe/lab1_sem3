@@ -6,6 +6,7 @@
 #include <string>
 
 #include "matrixes.h"
+#include "input.h"
 
 using namespace MyMatrixes;
 
@@ -106,7 +107,13 @@ void print_list_as_array(const MatrixList * list) {
 }
 
 ListMatrix * MyMatrixes::init_list_matrix() {
-    auto * M = new ListMatrix;
+    ListMatrix * M = nullptr;
+    try {
+        M = new ListMatrix;
+    } catch (std::bad_alloc & ba) {
+        std::cout << ba.what() << std::endl;
+        exit(MEMORY_ERROR);
+    }
     M->array = nullptr;
     M->n = 0;
 

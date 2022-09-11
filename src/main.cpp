@@ -23,7 +23,6 @@ int main() {
 
     std::cout << "Введите любую строку, чтобы завершить работу программы";
 
-
     destruct_list_matrix(LM);
     destruct_CSR_matrix(M);
     return 0;

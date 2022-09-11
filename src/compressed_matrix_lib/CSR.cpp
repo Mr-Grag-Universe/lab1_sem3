@@ -6,24 +6,10 @@
 #include <cstring>
 
 #include "matrixes.h"
+#include "input.h"
 
 using namespace MyMatrixes;
 
-int item_comp(const void *a, const void *b) {
-    Item * item1 = (Item*) a;
-    Item * item2 = (Item*) b;
-    if (item1->i != item2->i)
-        return (int) ((long long) item1->i - (long long) item2->i);
-    return (int) ((long long) item1->j - (long long) item2->j);
-}
-
-void * MyMatrixes::insert(void * array, size_t len, void * sub_array, size_t sub_len, size_t offset) {
-    char * tmp = new char[len+sub_len];
-    std::memcpy(tmp, array, offset);
-    std::memcpy(tmp + offset + sub_len, tmp + offset, len-offset);
-    std::memcpy(tmp + offset, sub_array, sub_len);
-    return (void *) tmp;
-}
 
 CSR_matrix * MyMatrixes::init_CSR_matrix() {
     auto * M = new CSR_matrix;
@@ -40,42 +26,61 @@ CSR_matrix * MyMatrixes::init_CSR_matrix() {
 }
 
 CSR_matrix * MyMatrixes::init_CSR_matrix(Item * &items, size_t n, size_t width, size_t height) {
-    CSR_matrix * M = new CSR_matrix;// init_CSR_matrix();
+    CSR_matrix * M = nullptr;
+    try {
+        M = new CSR_matrix; //init_CSR_matrix();
+    } catch (std::bad_alloc & ba) {
+        std::cerr << ba.what() << std::endl;
+        exit(MEMORY_ERROR);
+    }
     M->width = width;
     M->height = height;
     M->n_items = 0;
     M->rows_indexes = nullptr;
     M->cols_indexes = nullptr;
     M->items = nullptr;
+
     // исправление если мало элементов (добавляем нули - как элементы нулевых строк)
     size_t new_n = n;
-    if (n < height) {
-        for (size_t i = 0; i < height; ++i) {
-            bool found = false;
-            for (size_t j = 0; j < new_n; ++j) {
-                if (items[j].i == i) {
-                    found = true;
-                    break;
-                }
+    for (size_t i = 0; i < height; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < new_n; ++j) {
+            if (items[j].i == i) {
+                found = true;
+                break;
             }
-            if (!found) {
-                Item item = {i, 0, 0};
-                // void * tmp = insert(items, new_n * sizeof(Item), &item, sizeof(Item), sizeof(Item)*new_n);
-                Item * tmp = new Item[new_n+1];
-                std::memmove(tmp+1, items, sizeof(Item) * new_n);
-                tmp[0] = item;
+        }
+        if (!found) {
+            Item item = {i, 0, 0};
+            // void * tmp = insert(items, new_n * sizeof(Item), &item, sizeof(Item), sizeof(Item)*new_n);
+            Item * tmp = nullptr;
+            try {
+                tmp = new Item[new_n+1];
+            } catch (std::bad_alloc & ba) {
+                std::cerr << ba.what() << std::endl;
+                exit(MEMORY_ERROR);
+            }
+            std::memmove(tmp+1, items, sizeof(Item) * new_n);
+            tmp[0] = item;
 
-                delete[] items;
-                items = (Item*) tmp;
-                ++new_n;
-            }
+            delete[] items;
+            items = (Item*) tmp;
+            ++new_n;
         }
     }
 
     std::qsort(items, new_n, sizeof(Item), item_comp);
-    int * item = new int[new_n];
-    auto * cols = new size_t[new_n];
-    auto * rows = new size_t[height+1];
+    int * item = nullptr;
+    size_t * cols = nullptr;
+    size_t * rows = nullptr;
+    try {
+        item = new int[new_n];
+        cols = new size_t[new_n];
+        rows = new size_t[height+1];
+    } catch (std::bad_alloc & ba) {
+        std::cerr << ba.what() << std::endl;
+        exit(MEMORY_ERROR);
+    }
     rows[0] = 0;
 
     size_t ind = 0;
@@ -172,7 +177,13 @@ void MyMatrixes::insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t 
 }
 
 ListMatrix * MyMatrixes::cut_CSR_matrix(CSR_matrix * &M) {
-    auto * max_col = new size_t[M->height];
+    size_t * max_col = nullptr;
+    try {
+        max_col = new size_t[M->height];
+    } catch (std::bad_alloc & ba) {
+        std:: cout << ba.what() << std::endl;
+        exit(MEMORY_ERROR);
+    }
     for (size_t i = 0; i < M->height; ++i) {
         max_col[i] = M->cols_indexes[M->rows_indexes[i]];
         int max = M->items[M->rows_indexes[i]];

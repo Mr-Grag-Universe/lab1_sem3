@@ -5,8 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(CM_lib
         CSR.cpp
+        DOC.cpp
         ListMatrix.cpp
         input.cpp
+        common.cpp
         matrixes.h
         input.h
         )

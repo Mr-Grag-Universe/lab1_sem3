@@ -50,7 +50,13 @@ size_t read_size_t() {
 }
 
 int * read_int_array(size_t n) {
-    int * array = new int[n];
+    int * array = nullptr;
+    try {
+        array = new int[n];
+    } catch (std::bad_alloc &ba) {
+        std::cerr << ba.what() << std::endl;
+        return nullptr;
+    }
     for (size_t i = 0; i < n; ++i) {
         std::string s;
         std::cin >> s;
@@ -120,6 +126,7 @@ CSR_matrix * MyMatrixes::read_compressed_matrix() {
     size_t counter = 0;
     size_t size = 1;
     Item * items = new Item[1];
+    Item * tmp = nullptr;
     std::cout << "enter not zero elements in your matrix in format:\n<i-index> <j-index> <int-data>" << std::endl;
     while (counter < height * width) {
         try {
@@ -138,7 +145,13 @@ CSR_matrix * MyMatrixes::read_compressed_matrix() {
             items[counter].data = data;
         } catch (std::runtime_error & e) {
             // конец ввода
-            Item * tmp = new Item[counter];
+            // обрезаем массив
+            try {
+                tmp = new Item[counter];
+            } catch (std::bad_alloc & ba) {
+                std::cerr << ba.what() << std::endl;
+                exit(MEMORY_ERROR);
+            }
             std::memmove(tmp, items, sizeof(Item) * counter);
             delete[] items;
             items = tmp;
@@ -157,7 +170,12 @@ CSR_matrix * MyMatrixes::read_compressed_matrix() {
         // расширение массива
         if (counter == size) {
             size *= 2;
-            Item * tmp = new Item[size];
+            try {
+                tmp = new Item[size];
+            } catch (std::bad_alloc & ba) {
+                std::cerr << ba.what() << std::endl;
+                exit(MEMORY_ERROR);
+            }
             std::memmove(tmp, items, sizeof(Item) * counter);
             delete[] items;
             items = tmp;

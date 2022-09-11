@@ -10,6 +10,7 @@ namespace MyMatrixes {
     typedef enum InputErrors {
         END_OF_STREAM,
         CONVERSION_FAILED,
+        MEMORY_ERROR,
     } InputErrors;
 
     int * read_matrix_line(size_t n);
