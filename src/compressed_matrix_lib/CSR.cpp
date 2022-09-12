@@ -177,13 +177,18 @@ void MyMatrixes::insert_row_CSR_matrix(CSR_matrix * &M, const int * row, size_t 
 }
 
 ListMatrix * MyMatrixes::cut_CSR_matrix(CSR_matrix * &M) {
+    if (!M)
+        return nullptr;
+
     size_t * max_col = nullptr;
     try {
         max_col = new size_t[M->height];
     } catch (std::bad_alloc & ba) {
         std:: cout << ba.what() << std::endl;
-        exit(MEMORY_ERROR);
+        return nullptr;
     }
+
+    // выбираем номера столбцов с максимуми
     for (size_t i = 0; i < M->height; ++i) {
         max_col[i] = M->cols_indexes[M->rows_indexes[i]];
         int max = M->items[M->rows_indexes[i]];
@@ -200,6 +205,7 @@ ListMatrix * MyMatrixes::cut_CSR_matrix(CSR_matrix * &M) {
 //    std::cout << std::endl;
 
     ListMatrix * LM = init_list_matrix();
+    // пушим в новую матрицу
     size_t count = 0;
     for (size_t i = 1; i < M->height+1; ++i) {
         size_t ind = 0;

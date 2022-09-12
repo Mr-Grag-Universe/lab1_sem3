@@ -38,9 +38,9 @@ namespace MyMatrixes {
     } DOC_matrix;
     DOC_matrix * init_DOC_matrix(size_t width=0, size_t height=0);
     DOC_matrix * init_DOC_matrix(Item * &items, size_t n, size_t width, size_t height);
-    ListMatrix * cut_DOC_matrix(CSR_matrix * &M);
+    ListMatrix * cut_DOC_matrix(DOC_matrix * &M);
     void print_DOC_matrix(const DOC_matrix * M);
-    void print_DOC_matrix(const CSR_matrix * M);
+    void print_DOC_matrix(const DOC_matrix * M);
     void destruct_DOC_matrix(DOC_matrix * &M);
 
 

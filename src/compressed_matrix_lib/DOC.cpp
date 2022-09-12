@@ -28,8 +28,62 @@ DOC_matrix * MyMatrixes::init_DOC_matrix(Item * &items, size_t n, size_t width, 
     return M;
 }
 
-ListMatrix * MyMatrixes::cut_DOC_matrix(CSR_matrix * &M) {
-    return nullptr;
+ListMatrix * MyMatrixes::cut_DOC_matrix(DOC_matrix * &M) {
+    if (!M)
+        return nullptr;
+
+    size_t * max_col = nullptr;
+    try {
+        max_col = new size_t[M->height];
+    } catch (std::bad_alloc & ba) {
+        std:: cout << ba.what() << std::endl;
+        return nullptr;
+    }
+
+    // выборка максимумов
+    size_t count = 0;
+    for (size_t i = 0; i < M->height; ++i) {
+        int max_item = M->items[count].data;
+        max_col[i] = 0;
+        while (M->items[count].i == i) {
+            if (max_item < M->items[count].data) {
+                max_item = M->items[count].data;
+                max_col[i] = M->items[count].j;
+            }
+            count++;
+        }
+    }
+
+//    std::cout << "max_col: ";
+//    for (size_t i = 0; i < M->height; ++i)
+//        std::cout << max_col[i] << " ";
+//    std::cout << std::endl;
+
+    ListMatrix * LM = init_list_matrix();
+    count = 0;
+    for (size_t i = 0; i < M->height; ++i) {
+        MatrixList * list = init_list();
+
+        // пушим в лист
+        size_t ind = 0;
+        while (ind <= max_col[i]) {
+            if (ind == M->items[count].j) {
+                push_back(list, M->items[count].data);
+                ++count;
+            }
+            else {
+                push_back(list, 0);
+            }
+            ++ind;
+        }
+
+        push_line_list_matrix(LM, list);
+        delete list;
+    }
+
+    delete[] max_col;
+
+    return LM;
 }
 
 void MyMatrixes::print_DOC_matrix(const DOC_matrix * M) {
